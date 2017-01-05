@@ -36,13 +36,26 @@ Connect-Device -Hostname mypanosevice.example.local -Credential (Get-Credential)
                 user=$Credential.GetNetworkCredential().UserName
                 password=$Credential.GetNetworkCredential().Password
             }
+            if ($APIResponse) {
+                #Initialize a PANOSAPISessions Variable if it doesn't already exist
+                if ($SCRIPT:PANOSAPISessions -eq $null) {
+                    $SCRIPT:PANOSAPISessions = @{}
+                }
 
-            $SCRIPT:PANOSAPISessions.$HostNameItem = [PSCustomObject][Ordered]@{
-                Key=$APIResponse.key
-            }
+                $SCRIPT:PANOSAPISessions.$HostNameItem = [PSCustomObject][Ordered]@{
+                    Key=$APIResponse.key
+                }
 
-            if ($Persistent) {
+                if ($Persistent) {
+                    #Uses CredMan module
+                    $SetCredentialParams = @{
+                        Target = ('scagpano:' + $HostNameItem)
+                        UserName = $Credential.GetNetworkCredential().UserName
+                        Password = (ConvertTo-JSON -Compress $SCRIPT:PANOSAPISessions[$HostNameItem])
+                    }
 
+                    Set-WCMCredential @SetCredentialParams
+                }
             }
         }
     }
