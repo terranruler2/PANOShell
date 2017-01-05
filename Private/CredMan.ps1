@@ -503,7 +503,8 @@ try
 catch
 {
 	#only remove the error we generate
-	$Error.RemoveAt($Error.Count-1)
+	#Not Useful
+    #$Error.RemoveAt($Error.Count-1)
 }
 if($null -eq $PsCredMan)
 {
