@@ -25,10 +25,14 @@ This command is the core of the PANOS Module and is used by nearly every other c
         Verbose = ($PSBoundParameters.Verbose -eq $true)
     }
 
-    #Verify API credentials are present
+    #Retrieve API credentials unless 'keygen' action is specified or an API key was manually provided to the command
     if ($ArgumentList.Type -notmatch 'keygen') {
-        if (-not $ArgumentList.key) {write-error "No API key specified in ArgumentList. Did you connect with Connect-PANOSDevice First?"; return}
+        if (! $ArgumentList.key) {
+
+
+        }
     }
+
 
     if ($PSCmdlet.ShouldProcess($HostNameItem,"Invoking API $($ArgumentList.Type) Request")) {
         #Use TLS1.2 by Default. TLS1.0 might be disabled on some Palo Alto Security Profiles.
