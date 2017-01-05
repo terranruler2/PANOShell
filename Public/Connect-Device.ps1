@@ -36,6 +36,7 @@ Connect-Device -Hostname mypanosevice.example.local -Credential (Get-Credential)
 #TODO: Add Parameter for API Key Directly
     process {
         foreach ($HostnameItem in $HostName) {
+<#
             #Check if a session entry already exists
             if (Get-Variable -Name PANOSAPISessions -Scope Script -ErrorAction SilentlyContinue) {
                 if ($SCRIPT:PANOSAPISessions.ContainsKey($HostnameItem)) {
@@ -44,8 +45,8 @@ Connect-Device -Hostname mypanosevice.example.local -Credential (Get-Credential)
             }
 
             #Next, see if an entry exists in Windows Credential Manager
-            $WCMCredential = Get-WCMCredential -target ($WCSPrefix + $HostnameItem)
-            if ($WCMCredential) {
+            $WCSCredential = Get-WCSCredential -target ($WCSPrefix + $HostnameItem)
+            if ($WCSCredential) {
                 write-verbose "${HostnameItem}: Stored API key found in Windows Credential Manager"
                 #TODO: Separate out Session Object Creation to a separate private function.
 
@@ -55,7 +56,12 @@ Connect-Device -Hostname mypanosevice.example.local -Credential (Get-Credential)
                 }
 
                 #Rehydrate session object from Credential Manager
-                $SCRIPT:PANOSAPISessions[$HostNameItem] = (Get-WCMCredential -target ($WCSPrefix + $HostnameItem)).credentialblob | convertfrom-json
+                $SCRIPT:PANOSAPISessions[$HostNameItem] = (Get-WCSCredential -target ($WCSPrefix + $HostnameItem)).credentialblob | convertfrom-json
+            }
+#>
+            #If
+            if ($PsCmdlet.ParameterSetName -like 'Credential' -and (!$Credential) ) {
+                $Credential = Get-Credential -Message "Enter your PANOS credentials for $HostnameItem"
             }
 
             #Request a new key using credentials
@@ -83,7 +89,7 @@ Connect-Device -Hostname mypanosevice.example.local -Credential (Get-Credential)
                         Password = (ConvertTo-JSON -Compress $SCRIPT:PANOSAPISessions[$HostnameItem])
                     }
 
-                    Set-WCMCredential @SetCredentialParams
+                    Set-WCSCredential @SetCredentialParams
                 }
             }
         }

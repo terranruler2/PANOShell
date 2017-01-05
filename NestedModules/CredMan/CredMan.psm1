@@ -18,7 +18,7 @@
 .Description
   Provides the following API when dot-sourced
   Del-Cred
-  Get-WCMCredentialAll
+  Get-WCSCredentialAll
   Read-Cred
   Write-Cred
 
@@ -60,7 +60,7 @@
   		credentials types.
 				- Added #region blocks to clarify internal functionality
 				- Added 'CredType' param to specify what sort of credential is to be read,
-				created or deleted (not used for -ShoCred or Get-WCMCredentialAll)
+				created or deleted (not used for -ShoCred or Get-WCSCredentialAll)
 				- Added 'CredPersist' param to specify how the credential is to be stored;
 				only used in Write-Cred
 				- Added 'All' param for -ShoCreds to differentiate between creds summary
@@ -519,7 +519,7 @@ if($null -eq $PsCredMan)
                                0x80070520 = "SecurityError";
                                0x8007089A = "SecurityError"}
 
-function Get-WCMCredentialType
+function Get-WCSCredentialType
 {
 	Param
 	(
@@ -546,7 +546,7 @@ function Get-WCMCredentialType
 	}
 }
 
-function Get-WCMCredentialPersist
+function Get-WCSCredentialPersist
 {
 	Param
 	(
@@ -565,7 +565,7 @@ function Get-WCMCredentialPersist
 #endregion
 
 #region Dot-Sourced API
-function Remove-WCMCredential
+function Remove-WCSCredential
 {
 <#
 .Synopsis
@@ -605,7 +605,7 @@ function Remove-WCMCredential
 	[Int] $Results = 0
 	try
 	{
-		$Results = [PsUtils.CredMan]::CredDelete($Target, $(Get-WCMCredentialType $CredType))
+		$Results = [PsUtils.CredMan]::CredDelete($Target, $(Get-WCSCredentialType $CredType))
 	}
 	catch
 	{
@@ -621,7 +621,7 @@ function Remove-WCMCredential
 	return $Results
 }
 
-function Get-WCMCredentialAll
+function Get-WCSCredentialAll
 {
 <#
 .Synopsis
@@ -673,7 +673,7 @@ function Get-WCMCredentialAll
 	return $Creds
 }
 
-function Get-WCMCredential
+function Get-WCSCredential
 {
 <#
 .Synopsis
@@ -721,7 +721,7 @@ function Get-WCMCredential
     [Int] $Results = 0
 	try
 	{
-		$Results = [PsUtils.CredMan]::CredRead($Target, $(Get-WCMCredentialType $CredType), [Ref]$Cred)
+		$Results = [PsUtils.CredMan]::CredRead($Target, $(Get-WCSCredentialType $CredType), [Ref]$Cred)
 	}
 	catch
 	{
@@ -743,7 +743,7 @@ function Get-WCMCredential
 	return $Cred
 }
 
-function Set-WCMCredential
+function Set-WCSCredential
 {
 <#
 .Synopsis
@@ -827,11 +827,11 @@ function Set-WCMCredential
 		$true  {$Cred.Flags = [PsUtils.CredMan+CRED_FLAGS]::USERNAME_TARGET}
 		$false  {$Cred.Flags = [PsUtils.CredMan+CRED_FLAGS]::NONE}
 	}
-	$Cred.Type = Get-WCMCredentialType $CredType
+	$Cred.Type = Get-WCSCredentialType $CredType
 	$Cred.TargetName = $Target
 	$Cred.UserName = $UserName
 	$Cred.AttributeCount = 0
-	$Cred.Persist = Get-WCMCredentialPersist $CredPersist
+	$Cred.Persist = Get-WCSCredentialPersist $CredPersist
 	$Cred.CredentialBlobSize = [Text.Encoding]::Unicode.GetBytes($Password).Length
 	$Cred.CredentialBlob = $Password
 	$Cred.Comment = $Comment
@@ -872,10 +872,10 @@ function CredManMain
 			return
 		}
 		# may be [Int32] or [Management.Automation.ErrorRecord]
-		[Object] $Results = Set-WCMCredential $Target $User $Pass $Comment $CredType $CredPersist
+		[Object] $Results = Set-WCSCredential $Target $User $Pass $Comment $CredType $CredPersist
 		if(0 -eq $Results)
 		{
-			[Object] $Cred = Get-WCMCredential $Target $CredType
+			[Object] $Cred = Get-WCSCredential $Target $CredType
 			if($null -eq $Cred)
 			{
 				Write-Host "Credentials for '$Target', '$User' was not found."
@@ -910,7 +910,7 @@ Successfully wrote or updated credentials as:
 			return
 		}
 		# may be [Int32] or [Management.Automation.ErrorRecord]
-		[Object] $Results = Remove-WCMCredential $Target $CredType
+		[Object] $Results = Remove-WCSCredential $Target $CredType
 		if(0 -eq $Results)
 		{
 			Write-Host "Successfully deleted credentials for '$Target'"
@@ -930,7 +930,7 @@ Successfully wrote or updated credentials as:
 			return
 		}
 		# may be [PsUtils.CredMan+Credential] or [Management.Automation.ErrorRecord]
-		[Object] $Cred = Get-WCMCredential $Target $CredType
+		[Object] $Cred = Get-WCSCredential $Target $CredType
 		if($null -eq $Cred)
 		{
 			Write-Host "Credential for '$Target' as '$CredType' type was not found."
@@ -956,7 +956,7 @@ Found credentials as:
 	if($ShoCred)
 	{
 		# may be [PsUtils.CredMan+Credential[]] or [Management.Automation.ErrorRecord]
-		[Object] $Creds = Get-WCMCredentialAll
+		[Object] $Creds = Get-WCSCredentialAll
 		if($Creds -split [Array] -and 0 -eq $Creds.Length)
 		{
 			Write-Host "No Credentials found for $($Env:UserName)"
