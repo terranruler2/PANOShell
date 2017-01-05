@@ -1,0 +1,3 @@
+[submodule "NestedModules\\TunableSSLValidator"]
+	path = NestedModules\\TunableSSLValidator
+	url = https://github.com/Jaykul/Tunable-SSL-Validator
