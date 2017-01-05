@@ -10,8 +10,13 @@ foreach ($NetAssembly in $NetAssemblies) {
 $PublicFunctions  = @( Get-ChildItem -Path $PSScriptRoot\Public\*.ps1 -ErrorAction SilentlyContinue )
 $PrivateFunctions = @( Get-ChildItem -Path $PSScriptRoot\Private\*.ps1 -ErrorAction SilentlyContinue )
 
+$NestedModules = @( get-childitem -path .\NestedModules\*\*.psm1 -ErrorAction SilentlyContinue | Split-Path -Parent )
+
 #Get JSON settings files
 $ModuleSettings = @( Get-ChildItem -Path $PSScriptRoot\Settings\*.json -ErrorAction SilentlyContinue )
+
+#Import Nested Modules
+import-module -Name $NestedModules
 
 #Dot source the files
 Foreach($FunctionToImport in @($PublicFunctions + $PrivateFunctions))
