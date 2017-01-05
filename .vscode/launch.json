@@ -1,0 +1,22 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+
+        {
+            "type": "PowerShell",
+            "request": "launch",
+            "name": "PowerShell (current file)",
+            "script": "${file}",
+            "args": [],
+            "cwd": "${file}"
+        },
+        {
+            "type": "PowerShell",
+            "request": "launch",
+            "name": "PowerShell (StartDebug)",
+            "script": "${workspaceRoot}\\.vscode\\StartDebug.ps1",
+            "args": [],
+            "cwd": "${workspaceRoot}"
+        }
+    ]
+}
