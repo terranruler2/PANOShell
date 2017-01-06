@@ -25,7 +25,10 @@ This command is the core of the PANOShell Module and is used by nearly every oth
 
         #If a credential is specified, use those credentials for the request.
         #This is a one-time action and is not saved, Use Connect-PANOSDevice to persist login information
-        [PSCredential]$Credential
+        [PSCredential]$Credential,
+
+        #Return Raw XML rather than an XML object. Useful for configs
+        [Switch]$RawXML
     )
 
     begin {
@@ -105,7 +108,12 @@ This command is the core of the PANOShell Module and is used by nearly every oth
                         continue
                     }
                     'Success' {
-                        $APIResponse.result
+                        if ($RawXML) {
+                            $APIResponse.result.innerxml
+                        } else {
+                            $APIResponse.result
+                        }
+
                     }
                     default {
                         write-error "$HostnameItem responded with unknown status" $APIResponse.status
