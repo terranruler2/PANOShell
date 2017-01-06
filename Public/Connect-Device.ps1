@@ -39,7 +39,7 @@ If you wish to remove or overwrite a "saved" session, use Disconnect-PANOSDevice
     [CmdletBinding(DefaultParameterSetName="HostnameOnly")]
     param (
         #Hostname or IP Address of PANOS Device (Firewall, Panorama, Collector, etc.)
-        [Parameter(ParameterSetName="HostnameOnly",Mandatory,ValueFromPipeline,ValueFromPipelineByPropertyName)]
+        [Parameter(ParameterSetName="HostnameOnly",Mandatory,ValueFromPipeline,ValueFromPipelineByPropertyName,Position=0)]
         [Parameter(ParameterSetName="Credential",Mandatory,ValueFromPipeline,ValueFromPipelineByPropertyName)]
         [Parameter(ParameterSetName="APIKey",Mandatory,ValueFromPipeline,ValueFromPipelineByPropertyName)]
         [String[]]$Hostname,
@@ -52,8 +52,8 @@ If you wish to remove or overwrite a "saved" session, use Disconnect-PANOSDevice
         #Save the session information to the Windows Credential Store
         #Future connections to the same host will reconnect with the same session without requiring a password even
         #After restarting
-        [Switch]$Save
-        #Don't provide connection information
+        [Switch]$Save,
+        #Don't output connection objects, just connect
         [Switch]$Quiet
     )
 
@@ -109,7 +109,7 @@ If you wish to remove or overwrite a "saved" session, use Disconnect-PANOSDevice
                         Key=$APIResponse.key
                     }
                 } else {
-                    write-error "An Error occured attempting to obtain an API key using the specified credentials"
+                    write-error "An Error occured attempting to obtain an API key for $HostnameItem using the specified credentials"
                     continue
                 }
             }

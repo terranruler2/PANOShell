@@ -33,6 +33,8 @@ This command is the core of the PANOS Module and is used by nearly every other c
         if ($SCRIPT:PANOSAPISessions -eq $null) {
             $SCRIPT:PANOSAPISessions = @{}
         }
+
+
     }
 
     process {
@@ -65,7 +67,12 @@ This command is the core of the PANOS Module and is used by nearly every other c
                     $PSBoundParameters.Remove("Hostname") | out-null
                     $ArgumentList.key = (Invoke-APIRequest @PSBoundParameters -Hostname $HostNameItem -ArgumentList $APIRequestParams).key
                 } else {
-                    throw "No API Key Found"
+                    write-verbose "No Existing Session or Credentials for $HostnameItem found. Calling Connect-PANOSDevice"
+                    $ConnectionInfo = Connect-Device $HostnameItem
+                    if (!$ConnectionInfo) {
+                        write-error "Request Failed. You must either have an existing session to $HostnameItem or specify a Credential or API Key"
+                        continue
+                    }
                     #TODO: Attempt the connect using any in-memory connection info
                     #Connect-Device -Hostname $HostNameItem
                 }
@@ -95,12 +102,14 @@ This command is the core of the PANOS Module and is used by nearly every other c
                 switch ($APIResponse.status) {
                     'Error' {
                         write-error ("$HostnameItem responded with Error " + $APIResponse.code + ": " + $APIResponse.result.msg)
+                        continue
                     }
                     'Success' {
                         $APIResponse.result
                     }
                     default {
                         write-error "$HostnameItem responded with unknown status" $APIResponse.status
+                        continue
                     }
                 }
             }
