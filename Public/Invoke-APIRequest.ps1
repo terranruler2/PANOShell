@@ -44,8 +44,13 @@ https://www.paloaltonetworks.com/documentation/71/pan-os/xml-api/get-started-wit
     begin {
         #Initialize a PANOSAPISessions Variable if it doesn't already exist
         if (!$Hostname) {
-            write-verbose "No Hostname specified, sending to all connected sessions"
-            $Hostname = $SCRIPT:PANOSAPISessions.keys
+            if ($SCRIPT:PANOSAPISessions.keys.count -eq 0) {
+                Write-Warning "You are not connected to any PAN-OS devices. Specify one with the -Hostname parameter or use Connect-PANOSDevice. Exiting..."
+                return
+            } else {
+                write-verbose "No Hostname specified, sending to all connected sessions"
+                $Hostname = $SCRIPT:PANOSAPISessions.keys
+            }
         }
 
     }
