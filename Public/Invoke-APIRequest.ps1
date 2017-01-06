@@ -3,7 +3,7 @@ function Invoke-APIRequest {
 .SYNOPSIS
 Executes the requested command and associated arguments against the Palo Alto XML api
 .NOTES
-This command is the core of the PANOS Module and is used by nearly every other command to interact with the API
+This command is the core of the PANOShell Module and is used by nearly every other command to interact with the API
 #>
 
     [CmdletBinding(SupportsShouldProcess)]
@@ -56,7 +56,7 @@ This command is the core of the PANOS Module and is used by nearly every other c
 
                 #If Credentials are present, use those to fetch an API key for a one-time operation
                 if ($Credential) {
-                    write-verbose "PANOS Credential specified for $HostnameItem, fetching API Key"
+                    write-verbose "PAN-OS Credential specified for $HostnameItem, fetching API Key"
                     $APIRequestParams = @{
                         type="keygen"
                         user=$Credential.GetNetworkCredential().UserName

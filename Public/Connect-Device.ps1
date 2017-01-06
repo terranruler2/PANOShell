@@ -5,7 +5,13 @@ function Connect-Device {
 .SYNOPSIS
 Connects to a PANOS device via the XML API
 .DESCRIPTION
-This command connects to the PANOS API of a system and establishes a session.
+This command connects to the PANOS API of a system and establishes session information for API calls.
+You can connect to multiple systems. If you run a command without specifying the Hostname parameter, the command
+will run against all systems you are currently connected to.
+
+You can also save a connection with the Save parameter, which stores your API key in the Windows Credential Store. You
+can then run this command without a password or API key and it will automatically connect you using your saved credential.
+
 .EXAMPLE
 Connect-PANOSDevice -Hostname mypanodevice.example.local
 
@@ -68,11 +74,6 @@ If you wish to remove or overwrite a "saved" session, use Disconnect-PANOSDevice
 
         #Variable for the Windows Credential Store Prefix
         $WCSPrefix = 'PANOShell:'
-
-        #Initialize a PANOSAPISessions Variable if it doesn't already exist
-        if ($SCRIPT:PANOSAPISessions -eq $null) {
-            $SCRIPT:PANOSAPISessions = @{}
-        }
     }
 
     process {
@@ -87,7 +88,7 @@ If you wish to remove or overwrite a "saved" session, use Disconnect-PANOSDevice
             #If an API Key was specified, populate it directly
             if (!$SCRIPT:PANOSAPISessions.ContainsKey($HostnameItem) -and ($APIKey)) {
                 write-debug "API Key manually specified for $HostnameItem."
-                $SCRIPT:PANOSAPISessions.$HostnameItem = [PSCustomObject][Ordered]@{
+                $SCRIPT:PANOSAPISessions.$HostnameItem = [ordered]@{
                     Key=$APIKey
                 }
             }
@@ -105,7 +106,8 @@ If you wish to remove or overwrite a "saved" session, use Disconnect-PANOSDevice
                 }
 
                 if ($APIResponse) {
-                    $SCRIPT:PANOSAPISessions.$HostnameItem = [PSCustomObject][Ordered]@{
+                    $SCRIPT:PANOSAPISessions.$HostnameItem = @{
+                        HostName = $HostnameItem
                         Key=$APIResponse.key
                     }
                 } else {
@@ -139,7 +141,7 @@ If you wish to remove or overwrite a "saved" session, use Disconnect-PANOSDevice
                 }
 
                 if ($APIResponse) {
-                    $SCRIPT:PANOSAPISessions.$HostnameItem = [PSCustomObject][Ordered]@{
+                    $SCRIPT:PANOSAPISessions.$HostnameItem = @{
                         Key=$APIResponse.key
                     }
                 } else {
@@ -159,14 +161,20 @@ If you wish to remove or overwrite a "saved" session, use Disconnect-PANOSDevice
                     cmd="<show><system><info></info></system></show>"
                 }
                 if ($APIResponse) {
-                    #Return an object representing the connection
-                    #TODO: Return a proper object with a proper formatting type rather than a table entry
-                    $APIResponse.system | Select-Object @{Name="HostName";Expression={$HostnameItem}},
-                        devicename,
-                        sw-version,
-                        platform-family,
-                        system-mode,
-                        operational-mode | format-table -AutoSize
+                    $SystemInfoProps = "devicename","sw-version","platform-family","system-mode","operational-mode"
+
+                    #Add the hostname to the session info
+                    $SCRIPT:PANOSAPISessions[$HostnameItem].HostName = $HostnameItem
+                    #Add some additional properties, replacing if necessary
+                    foreach ($SystemInfoPropItem in $SystemInfoProps) {
+                        $SCRIPT:PANOSAPISessions[$HostnameItem].remove($SystemInfoPropItem) | out-null
+                        $SCRIPT:PANOSAPISessions[$HostnameItem].add($SystemInfoPropItem,$APIResponse.system.$SystemInfoPropItem) | out-null
+                    }
+
+                    #Return the API Object
+                    if (!$Quiet) {
+                        Get-Device $HostnameItem
+                    }
                 } else {
                     write-error "Connection could not be established to $HostnameItem"
                 }
