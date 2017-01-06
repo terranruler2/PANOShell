@@ -6,14 +6,21 @@ Executes the requested command and associated arguments against the Palo Alto XM
 This command is the core of the PANOShell Module and is used by nearly every other command to interact with the API
 #>
 
+
     [CmdletBinding(SupportsShouldProcess)]
+    #TODO: Add Regex Validate to URL for sanity checking
     param (
         #Hostname or IP Address of PANOS (Firewall, Panorama, Collector, etc.) device to issue the request.
         #If not specified it will use the global session information
         [Parameter(ValueFromPipeline,ValueFromPipelineByPropertyName)][String[]]$Hostname,
 
         #A hashtable list of arguments for the command, such as Type, Action, and XPath/CMD
-        $ArgumentList = @{},
+        [Parameter(ParameterSetName="ArgumentList",Mandatory)][HashTable]$ArgumentList = @{},
+
+        #Specify a relative URL generated from the PAN-OS API Browser. Example: '/api/?type=commit&cmd=<commit></commit>'
+        #NOTE: You cannot use Keygen in this manner
+        #WARNING: Whatever you enter here will be visible in verbose logs. Not recommended for sensitive data.
+        [Parameter(ParameterSetName="URL",Mandatory)][String]$URL,
 
         #HTTP Method to Use. Defaults to POST. API Key Requests are always done as POST regardless to obfuscate the credentials used
         #WARNING: GET WILL SHOW THE ENTIRE API REQUEST URI IN VERBOSE LOGS, INCLUDING API KEYS
@@ -84,11 +91,23 @@ This command is the core of the PANOShell Module and is used by nearly every oth
             #If a keygen is requested, always use POST to obfuscate the credentials used from verbose LOGS
             if ($ArgumentList.type -like 'keygen') { $ArgumentList.method = "POST" }
 
-            if ($PSCmdlet.ShouldProcess($HostNameItem,"Invoking API $($ArgumentList.Type) Request")) {
-                #Use TLS1.2 by Default. TLS1.0 might be disabled on some Palo Alto Security Profiles.
+            #Prepare the URI depending on how the request was made
+            #Raw URL Request
+            if ($URL) {
+                $RequestParams.URI = "https://${HostnameItem}" + $URL
+                #ToDo: Parse out the request type using a regex
+                $RequestType = "Direct URL"
+            #ArgumentList
+            } else {
+                $RequestParams.URI = "https://${HostnameItem}/api"
+                $RequestType = $ArgumentList.type
+            }
+            if ($PSCmdlet.ShouldProcess($HostNameItem,"Invoking API $RequestType Request")) {
+                #Use TLS1.2 by Default. TLS1.0 might be disabled on some Palo Alto Security profiles due to heartbleed
                 [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
+
                 try {
-                    $APIResponse = (Invoke-RestMethod @RequestParams -Uri "https://${HostnameItem}/api" -Body $ArgumentList).response
+                    $APIResponse = (Invoke-RestMethod @RequestParams -Body $ArgumentList).response
                 }
                 catch [System.Net.WebException] {
                     $lastError = $_
