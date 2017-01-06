@@ -30,10 +30,10 @@ This command is the core of the PANOShell Module and is used by nearly every oth
 
     begin {
         #Initialize a PANOSAPISessions Variable if it doesn't already exist
-        if ($SCRIPT:PANOSAPISessions -eq $null) {
-            $SCRIPT:PANOSAPISessions = @{}
+        if (!$Hostname) {
+            write-verbose "No Hostname specified, sending to all connected sessions"
+            $Hostname = $SCRIPT:PANOSAPISessions.keys
         }
-
 
     }
 

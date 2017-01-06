@@ -161,7 +161,7 @@ If you wish to remove or overwrite a "saved" session, use Disconnect-PANOSDevice
                     cmd="<show><system><info></info></system></show>"
                 }
                 if ($APIResponse) {
-                    $SystemInfoProps = "devicename","sw-version","platform-family","system-mode","operational-mode"
+                    $SystemInfoProps = "devicename","serial","sw-version","model","operational-mode"
 
                     #Add the hostname to the session info
                     $SCRIPT:PANOSAPISessions[$HostnameItem].HostName = $HostnameItem
@@ -176,7 +176,8 @@ If you wish to remove or overwrite a "saved" session, use Disconnect-PANOSDevice
                         Get-Device $HostnameItem
                     }
                 } else {
-                    write-error "Connection could not be established to $HostnameItem"
+                    write-error "Connection could not be established to $HostnameItem. Removing Session Entry"
+                    $SCRIPT:PANOSAPISessions.Remove($HostnameItem)
                 }
             }
 

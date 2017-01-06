@@ -7,7 +7,8 @@ Returns the session objects of PANOS Devices
 param (
     #Hostname or IP address of a PAN-OS device
     [String[]]$HostName,
-    #Display the API key for the session. Not recommended unless you have a specific need for it.
+    #Include the API key for the session. Not recommended unless you have a specific need for it.
+    #You must look at the full properties of the returned object to display it.
     [Switch]$ShowAPIKey
 )
 
@@ -23,9 +24,10 @@ process {
                 $PANOSession.Remove("Key")
             }
             #Output the new object with a custom view
+
             $ObjectDetailProps = @{
                 TypeName = "PANOShell.PANOSession"
-                DefaultProperties = "Hostname","Platform-Family","SW-Version","System-Mode"
+                DefaultProperties = "Hostname","Serial","Model","SW-Version"
                 PassThru = $true
             }
 
