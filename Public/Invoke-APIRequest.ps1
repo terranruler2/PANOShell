@@ -28,6 +28,13 @@ This command is the core of the PANOS Module and is used by nearly every other c
         [PSCredential]$Credential
     )
 
+    begin {
+        #Initialize a PANOSAPISessions Variable if it doesn't already exist
+        if ($SCRIPT:PANOSAPISessions -eq $null) {
+            $SCRIPT:PANOSAPISessions = @{}
+        }
+    }
+
     process {
         foreach ($HostnameItem in $Hostname) {
             $RequestParams = @{
@@ -37,8 +44,14 @@ This command is the core of the PANOS Module and is used by nearly every other c
                 Insecure = $Insecure
             }
 
+            #Check for an existing session with this host and use that key if available unless one was manually specified
+            if ($SCRIPT:PANOSAPISessions.ContainsKey($HostnameItem) -and (! $ArgumentList.key)) {
+                $ArgumentList.key = $SCRIPT:PANOSAPISESSIONS[$HostnameItem].key
+            }
+
             #Retrieve API credentials unless 'keygen' action is specified or an API key was manually provided to the command
             if (($ArgumentList.Type -notlike 'keygen') -and (! $ArgumentList.key)) {
+
                 #If Credentials are present, use those to fetch an API key for a one-time operation
                 if ($Credential) {
                     write-verbose "PANOS Credential specified for $HostnameItem, fetching API Key"
