@@ -4,6 +4,8 @@ function Invoke-APIRequest {
 Executes the requested command and associated arguments against the Palo Alto XML api
 .NOTES
 This command is the core of the PANOShell Module and is used by nearly every other command to interact with the API
+.LINK
+https://www.paloaltonetworks.com/documentation/71/pan-os/xml-api/get-started-with-the-pan-os-xml-api/explore-the-api
 #>
 
 
@@ -18,6 +20,7 @@ This command is the core of the PANOShell Module and is used by nearly every oth
         [Parameter(ParameterSetName="ArgumentList",Mandatory)][HashTable]$ArgumentList = @{},
 
         #Specify a relative URL generated from the PAN-OS API Browser. Example: '/api/?type=commit&cmd=<commit></commit>'
+        #See the LINKS section for more info on exploring the PAN-OS API
         #NOTE: You cannot use Keygen in this manner
         #WARNING: Whatever you enter here will be visible in verbose logs. Not recommended for sensitive data.
         [Parameter(ParameterSetName="URL",Mandatory)][String]$URL,
