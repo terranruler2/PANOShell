@@ -24,7 +24,7 @@ GUID = 'ed398787-1400-43c0-8849-e602941283c5'
 Author = 'Justin Grote'
 
 # Company or vendor of this module
-CompanyName = 'Unknown'
+CompanyName = 'JWG Networks'
 
 # Copyright statement for this module
 Copyright = '(c) 2017 Justin Grote. All rights reserved.'
