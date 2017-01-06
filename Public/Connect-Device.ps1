@@ -120,12 +120,14 @@ If you wish to remove or overwrite a "saved" session, use Disconnect-PANOSDevice
             if (!$SCRIPT:PANOSAPISessions.ContainsKey($HostnameItem)) {
                 $WCSTarget = "$WCSPrefix$HostnameItem"
                 write-debug "Checking Windows Credential Store for $WCSTarget"
-                $WCSCredential = Get-WCSCredential -target $WCSTarget
+                $WCSCredential = Get-WCSCredential -Target $WCSTarget
                 if ($WCSCredential) {
                     write-debug "${HostnameItem}: Stored API key found in Windows Credential Store"
                     #TODO: Separate out Session Object Creation to a separate private function.
                     #Rehydrate session object from Credential Store
-                    $SCRIPT:PANOSAPISessions[$HostNameItem] = (Get-WCSCredential -target ($WCSPrefix + $HostnameItem)).credentialblob | convertfrom-json
+                    $SCRIPT:PANOSAPISessions[$HostNameItem] = (Get-WCSCredential -Target ($WCSPrefix + $HostnameItem)).credentialblob |
+                        ConvertFrom-Json |
+                        ConvertTo-HashTable -verbose:$false
                 }
             }
 
