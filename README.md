@@ -44,7 +44,8 @@ Get-Help <command> -Full
 Quick Start Commands
 -
 ```powershell
-Connect-PANOSDevice -Hostname myfirewall.mycompany.local -Save
+Connect-PANOSDevice -Hostname mypanosdevice.mycompany.local -Save
 Get-PANOSDevice
+(Invoke-PANOSOperationalCommand "show system info").system
 Invoke-PANOSAPIRequest -ArgumentList @{type="op";cmd="<show><system><info></info></system></show>"}
 ```

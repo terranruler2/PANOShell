@@ -1,2 +1,7 @@
 import-module PanoShell
-Invoke-PANOSAPIRequest -Hostname 172.20.3.4 -ArgumentList @{type="Config";key="whatever"}
+connect-panosdevice scagpano
+#Should Error One Way
+#invoke-panosapirequest -url '/api/?type=op&cmd=<show><devices></devices></show>'
+#Should Error Another Way
+#invoke-panosapirequest -url '/api/?type=asdfasdf'
+(Invoke-PANOSOperationalCommand -command "show system info" -target '*').system | fl -prop *
