@@ -12,9 +12,6 @@ https://www.paloaltonetworks.com/documentation/71/pan-os/xml-api/get-started-wit
     [CmdletBinding(SupportsShouldProcess)]
     #TODO: Add Regex Validate to URL for sanity checking
     param (
-        #Hostname or IP Address of PANOS (Firewall, Panorama, Collector, etc.) device to issue the request.
-        #If not specified it will use the global session information
-        [Parameter(ValueFromPipeline,ValueFromPipelineByPropertyName)][String[]]$Hostname,
 
         #A hashtable list of arguments for the command, such as Type, Action, and XPath/CMD
         [Parameter(ParameterSetName="ArgumentList",Mandatory)][HashTable]$ArgumentList = @{},
@@ -24,6 +21,10 @@ https://www.paloaltonetworks.com/documentation/71/pan-os/xml-api/get-started-wit
         #NOTE: You cannot use Keygen in this manner
         #WARNING: Whatever you enter here will be visible in verbose logs. Not recommended for sensitive data.
         [Parameter(ParameterSetName="URL",Mandatory)][String]$URL,
+
+        #Hostname or IP Address of PANOS (Firewall, Panorama, Collector, etc.) device to issue the request.
+        #If not specified it will use the global session information
+        [Parameter(ValueFromPipeline,ValueFromPipelineByPropertyName)][String[]]$Hostname,
 
         #HTTP Method to Use. Defaults to POST. API Key Requests are always done as POST regardless to obfuscate the credentials used
         #WARNING: GET WILL SHOW THE ENTIRE API REQUEST URI IN VERBOSE LOGS, INCLUDING API KEYS
@@ -131,7 +132,11 @@ https://www.paloaltonetworks.com/documentation/71/pan-os/xml-api/get-started-wit
 
                 switch ($APIResponse.status) {
                     'Error' {
-                        write-error ("$HostnameItem responded with Error " + $APIResponse.code + ": " + $APIResponse.result.msg)
+                        #PA Puts error messages in different places. Select the right one.
+                        if ($APIResponse.selectnodes('./result/msg') -ne $null) {$APIResponseErrorText = $APIResponse.result.msg}
+                        elseif ($APIResponse.selectnodes('./msg/line') -ne $null) {$APIResponseErrorText = $APIResponse.msg.line.innertext}
+
+                        write-error ("$HostnameItem API responded with Error " + $APIResponse.code + ": " + $APIResponseErrorText)
                         continue
                     }
                     'Success' {
