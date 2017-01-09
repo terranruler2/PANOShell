@@ -67,7 +67,9 @@ Get-PANOSPanoramaManagedDevice -Connected | Invoke-PANOSOperationalCommand "show
             $panodevice = Get-PanoramaManagedDevice
             $targetDevices = @()
             foreach ($TargetItem in $Target) {
-                $targetDevices += $panodevice | Where-Object {($PSItem.devicename -like $targetItem) -or ($PSItem.serial -like $targetItem)}
+                $targetDevices += $panodevice | Where-Object {
+                    ($PSItem.hostname -like $targetItem) -or ($PSItem.serial -like $targetItem)
+                }
             }
             foreach ($targetDeviceItem in $targetDevices) {
                 $ArgumentList.target = $targetDeviceItem.serial
