@@ -162,7 +162,7 @@ If you wish to remove or overwrite a "saved" session, use Disconnect-PANOSDevice
                     type="op"
                     cmd="<show><system><info></info></system></show>"
                 }
-                if ($APIResponse) {
+                if ($APIResponse -and $APIResponse.GetType().name -notmatch 'ErrorRecord') {
                     $SystemInfoProps = "devicename","serial","sw-version","model","operational-mode"
 
                     #Add the hostname to the session info
