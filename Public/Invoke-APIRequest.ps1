@@ -141,14 +141,14 @@ https://www.paloaltonetworks.com/documentation/71/pan-os/xml-api/get-started-wit
                     }
                     'Success' {
                         if ($RawXML) {
-                            $APIResponse.result.innerxml
+                            IndentXML -Content $APIResponse.result.innerxml
                         } else {
                             $APIResponse.result
                         }
 
                     }
                     default {
-                        write-error "$HostnameItem responded with unknown status" $APIResponse.status
+                        write-error ("$HostnameItem responded with unknown status" + $APIResponse.status)
                         continue
                     }
                 }
