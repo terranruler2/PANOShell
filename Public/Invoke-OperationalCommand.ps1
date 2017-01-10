@@ -4,7 +4,17 @@ function Invoke-OperationalCommand {
 Run an operational command on connected PAN-OS device or on PAN-OS devices managed by Panorama
 *WARNING* THIS COMMAND IS NOT CURRENTLY SAFE WHEN CONNECTED TO MULTIPLE PANORAMAS AND MAY RESULT IN DUPLICATE EXECUTION
 .DESCRIPTION
-This is a wrapper for running operational commands against PAN-OS devices.
+This is a wrapper for running operational commands against PAN-OS devices. You can either specify the XML version of the command
+Or the PAN-OS CLI version of the command and this will interpret it accordingly
+
+You can use normal PAN-OS CLI syntax with one exception for now: Until I can figure out a way to get autocomplete
+information from the XML API, you have to specify parameters in name=value pair format. You can use quotes if either
+your name or value includes a space.
+
+For example:
+test security-policy-match from Trusted to Untrusted source 172.22.17.1 destination "4.2.2.2" destination-port 443 protocol 6 show-all yes
+becomes
+test security-policy-match from=Trusted to=Untrusted source=172.22.17.1 destination="4.2.2.2" destination-port=443 protocol=6 show-all=yes
 .EXAMPLE
 Invoke-PANOSOperationalCommand "show system info"
 
@@ -27,6 +37,10 @@ Invoke-PANOSOperationalCommand "check pending-changes" -Target 'MyDev*'
 Check to see if there are any pending changes on panorama managed devices with names starting with "MyDev".
 .EXAMPLE
 Get-PANOSPanoramaManagedDevice -Connected | Invoke-PANOSOperationalCommand "show high-availability state"
+
+Get the high availability state of all devices currently online and connected to the current panorama.
+.EXAMPLE
+Invoke-PANOSOperationalCommand ""
 
 #>
     [CmdletBinding(DefaultParameterSetName="Command")]
