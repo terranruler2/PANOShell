@@ -19,7 +19,7 @@ Only works on Panorama devices
     }
 
     process {
-        $APIResponse = Invoke-APIRequest -Verbose -ArgumentList @{
+        $APIResponse = Invoke-APIRequest -ArgumentList @{
             type="op"
             cmd=$cmdXML.innerxml
         }
