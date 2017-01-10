@@ -15,10 +15,10 @@ Constructs an XML based on PAN-OS CLI-Like Format
 
     #region Command Parsing Regex
     $REGEXNameValuePairQuoted = @'
-(\w+?\=["'][^"']+?["'])
+([\w-]+?\=["'][^"']+?["'])
 '@
     $REGEXNameValuePair = @'
-(\w+?\=[^"' ]+)
+([\w-]+?\=[^"' ]+)
 '@
     $REGEXValue = @'
 (["'][^"']+?["'])
