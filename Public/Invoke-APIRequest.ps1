@@ -140,10 +140,18 @@ https://www.paloaltonetworks.com/documentation/71/pan-os/xml-api/get-started-wit
                         continue
                     }
                     'Success' {
-                        if ($RawXML) {
-                            IndentXML -Content $APIResponse.result.innerxml
+                        #If this is a completions result, return the completion object
+                        if ($apiresponse.selectsinglenode('./completions')) {
+                            $APIResult = $APIResponse.completions
                         } else {
-                            $APIResponse.result
+                            $APIResult = $APIResponse.result
+                        }
+
+
+                        if ($RawXML) {
+                            IndentXML -Content $APIResult.innerxml
+                        } else {
+                            $APIResult
                         }
 
                     }

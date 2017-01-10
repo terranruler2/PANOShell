@@ -18,7 +18,8 @@ Currently only works for simple commands with no attributes or parameters
 
     process {
         foreach ($CommandItem in $Command) {
-            #If a space exists, assume it needs to be split into subcommands
+            #Split into unquoted words (arguments) and quoted phrases (values)
+
             $CommandItem.split(' ') | foreach-object {
                 write-verbose "Processing $PSItem"
                 if ($xmlObject.HasChildNodes) {
