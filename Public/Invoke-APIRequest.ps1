@@ -133,10 +133,18 @@ https://www.paloaltonetworks.com/documentation/71/pan-os/xml-api/get-started-wit
                 switch ($APIResponse.status) {
                     'Error' {
                         #PA Puts error messages in different places. Select the right one.
-                        if ($APIResponse.selectnodes('./result/msg') -ne $null) {$APIResponseErrorText = $APIResponse.result.msg}
-                        elseif ($APIResponse.selectnodes('./msg/line') -ne $null) {$APIResponseErrorText = $APIResponse.msg.line.innertext}
+                        if ($APIResponse.selectnodes('./result/msg') -ne $null) {
+                            $APIResponseErrorText = $APIResponse.result.msg
+                        }
+                        elseif ($APIResponse.selectnodes('./msg/line/text()') -ne $null) {
+                            $APIResponseErrorText = $APIResponse.selectnodes('./msg/line/text()').value
+                        }
 
-                        write-error ("$HostnameItem API responded with Error " + $APIResponse.code + ": " + $APIResponseErrorText)
+                        if ($APIResponseErrorText) {
+                            write-error ("$HostnameItem API responded with Error " + $APIResponse.code + ": " + $APIResponseErrorText)
+                        } else {
+                            write-error ("$HostnameItem API responded with Error " + $APIResponse.code + ".")
+                        }
                         continue
                     }
                     'Success' {
