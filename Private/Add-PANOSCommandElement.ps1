@@ -1,8 +1,7 @@
 function Add-PANOSCommandElement {
 <#
 .SYNOPSIS
-Constructs an XML based on words to be used in PANOS CLI commands
-Currently only works for simple commands with no attributes or parameters
+Constructs an XML based on PAN-OS CLI-Like Format
 #>
     param(
         #The command parts
