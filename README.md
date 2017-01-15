@@ -4,7 +4,7 @@
 
 This module provides a Powershell interface for the [Palo Alto Networks PAN-OS](https://www.paloaltonetworks.com/) firewall and security**PANOS**hell. products.
 
-The name is a portmanteu of PAN-OS and Powershell. **PANOS**hell.
+The mode name is a portmanteu of PAN-OS and Powershell. **PANOS**hell.
 
 This project focuses on providing PAN-OS management in line with the Powershell Promise:
 
@@ -12,9 +12,11 @@ This project focuses on providing PAN-OS management in line with the Powershell 
 
 Features
 -
-* **Comment Based Help**: All commands have Get-Help with documentation and examples.
+* **Full Comment Based Help**: All commands have Get-Help with documentation and examples.
 * **[PowerCLI](https://www.vmware.com/support/developer/PowerCLI/)-Like Session Support**: Use the Connect-PANOSDevice command to automatically fetch API keys. You can even save them in the Windows Credential Store for SSO login to devices.
 * **MultiDevice**: Fan out commands to multiple devices easily by connecting to multiple devices
+* **ASA-Like Packet Tracer**: Inspired by the [Cisco ASA Packet Tracer](http://www.cisco.com/c/en/us/td/docs/security/asa/asa84/asdm64/configuration_guide/asdm_64_config/admin_trouble.html#wp1092412), the Trace-PANOSPacket command allows you to more quickly troubleshoot the flow of a simulated packet through the system.
+* **Module Prefix Support**: Want to call the module something else? Import the module with the -Prefix argument and all the commands will automatically rename based on your specified prefix.
 
 Installation
 -
@@ -30,7 +32,7 @@ Install-Module PANOShell -scope CurrentUser
 Install-Module PANOShell
 ```
 ####Powershell V4 and Earlier
-Copy this repository to your personal modules folder (e.g. ~\Documents\WindowsPowerShell\Modules)
+Download the module from the Github Releases page and unzip into to your personal modules folder (e.g. ~\Documents\WindowsPowerShell\Modules)
 
 Getting Started
 -
@@ -38,7 +40,7 @@ Getting Started
 All commands have comment based help, so recommend starting with this:
 ```powershell
 Get-Command -Module PANOShell
-Get-Help <command> -Full
+Get-Help <command> -ShowWindow
 ```
 
 Quick Start Commands
