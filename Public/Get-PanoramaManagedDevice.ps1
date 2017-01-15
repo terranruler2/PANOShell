@@ -17,7 +17,6 @@ Only works on Panorama devices
         if ($Connected) {$cmdxml = Add-PANOSCommandElement "connected" $cmdXML}
         else {$cmdxml = Add-PANOSCommandElement "all" $cmdXML}
     }
-
     process {
         $APIResponse = Invoke-APIRequest -ArgumentList @{
             type="op"
