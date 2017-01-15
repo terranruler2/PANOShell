@@ -60,7 +60,9 @@ If you wish to remove or overwrite a "saved" session, use Disconnect-PANOSDevice
         #After restarting
         [Switch]$Save,
         #Don't output connection objects, just connect
-        [Switch]$Quiet
+        [Switch]$Quiet,
+        #Skip SSL Validation. Not Recommended but useful for connecting to self-signed or testing firewalls
+        [Switch]$Insecure
     )
 
     begin {
@@ -68,6 +70,7 @@ If you wish to remove or overwrite a "saved" session, use Disconnect-PANOSDevice
             #Passthrough Common Parameters to Request
             Verbose = ($PSBoundParameters.Verbose -eq $true)
             WhatIf = ($PSBoundParameters.WhatIf -eq $true)
+            Insecure = ($PSBoundParameters.Insecure -eq $true)
             #Obscure the password that would otherwise be shown in the "GET"
             HTTPMethod = "POST"
         }
