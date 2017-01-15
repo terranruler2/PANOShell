@@ -123,7 +123,7 @@ https://www.paloaltonetworks.com/documentation/71/pan-os/xml-api/get-started-wit
                 catch [System.Net.WebException] {
                     $lastError = $_
                     if ($lastError.exception.status -match 'TrustFailure') {
-                        write-error "Could not establish trust relationship for the SSL/TLS secure channel to $HostNameItem. Try running Invoke-APIRequest again with the -insecure parameter"
+                        write-error "Could not establish trust relationship for the SSL/TLS secure channel to $HostNameItem. Try running again using the -insecure parameter to ignore SSL errors."
                         continue
                     } else {
                         #Pass through the error

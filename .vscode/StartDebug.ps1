@@ -1,6 +1,6 @@
 $verbosepreference = "Continue"
 import-module PanoShell
-connect-panosdevice scagfw02a -quiet
+connect-panosdevice -hostname scagfw02b -apikey "whatever"
 write-host -foreground cyan 'Should Error with "devices is missing"'
 #invoke-panosapirequest -url '/api/?type=op&cmd=<show><devices></devices></show>' -rawxml
 write-host -foreground cyan 'Should Error with "illegal value for parameter"'
