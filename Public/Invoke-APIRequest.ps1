@@ -65,9 +65,11 @@ https://www.paloaltonetworks.com/documentation/71/pan-os/xml-api/get-started-wit
                 Insecure = $Insecure
             }
 
-            #Check for an existing session with this host and use that key if available unless one was manually specified
+            #Check for an existing session with this host and use that key and properties if available unless one was manually specified
             if ($SCRIPT:PANOSAPISessions.ContainsKey($HostnameItem) -and (! $ArgumentList.key)) {
                 $ArgumentList.key = $SCRIPT:PANOSAPISESSIONS[$HostnameItem].key
+                #Preserve SSL Ignore if session previously had it.
+                $RequestParams.Insecure = $SCRIPT:PANOSAPISESSIONS[$HostnameItem].insecure
             }
 
             #Retrieve API credentials unless 'keygen' action is specified or an API key was manually provided to the command

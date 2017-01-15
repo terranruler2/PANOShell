@@ -128,6 +128,5 @@ Constructs an XML based on PAN-OS CLI-Like Format
 
     }
 
-
     $xmlObject
 }

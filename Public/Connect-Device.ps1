@@ -137,7 +137,6 @@ If you wish to remove or overwrite a "saved" session, use Disconnect-PANOSDevice
             #Finally, as a default action, fetch an API key by asking for credentials
             if (!$SCRIPT:PANOSAPISessions.ContainsKey($HostnameItem)) {
                 $Credential = Get-Credential -Message "Enter your PANOS credentials for $HostnameItem" -ErrorAction stop
-
                 #Request a new key using credentials
                 $APIResponse = Invoke-APIRequest @PassThruParams -Hostname $HostnameItem -ArgumentList @{
                     type="keygen"
@@ -175,7 +174,7 @@ If you wish to remove or overwrite a "saved" session, use Disconnect-PANOSDevice
                         $SCRIPT:PANOSAPISessions[$HostnameItem].remove($SystemInfoPropItem) | out-null
                         $SCRIPT:PANOSAPISessions[$HostnameItem].add($SystemInfoPropItem,$APIResponse.system.$SystemInfoPropItem) | out-null
                     }
-
+                    $SCRIPT:PANOSAPISessions[$HostnameItem].insecure = $Insecure.tobool()
                     #Return the API Object
                     if (!$Quiet) {
                         Get-Device $HostnameItem
